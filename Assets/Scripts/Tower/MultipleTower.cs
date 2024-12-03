@@ -13,11 +13,10 @@ namespace Defend.Tower
 {
     public class MultipleTower : TowerBase
     {
-        [SerializeField] private int maxCount;
+        [SerializeField] protected int maxCount;
         protected override void Start()
         {
             base.Start();
-            Debug.Log("TEST1");
         }
 
         protected override void Update()
@@ -25,7 +24,7 @@ namespace Defend.Tower
             base.Update();
         }
 
-        protected virtual List<Transform> GetClosestTargets()
+        List<Transform> GetClosestTargets()
         {
             // 타겟 목록을 거리 기준으로 정렬
             var sortedTargets = UpdateTargets()

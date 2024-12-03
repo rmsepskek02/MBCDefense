@@ -14,19 +14,15 @@ namespace Defend.Tower
     public class SlowTower : MultipleTower
     {
         private HashSet<Transform> attackedTargets = new HashSet<Transform>(); // 이미 공격한 타겟 저장
-
-        // TODO :: MultipleTower 도 호출하나 ? 최상위만하나 ?
         protected override void Start()
         {
             base.Start();
-            
         }
 
         protected override void Update()
         {
             base.Update();
         }
-
         protected override void Shoot()
         {
             // 슛 딜레이와 타겟 유효성 검사

@@ -50,7 +50,6 @@ namespace Defend.Tower
 
         protected virtual void Start()
         {
-            Debug.Log("TEST");
             // ÂüÁ¶
             animator = GetComponent<Animator>();
             status = GetComponent<Status>();

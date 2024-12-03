@@ -1,6 +1,6 @@
 using UnityEngine;
 using UnityEngine.Events;
-
+using System.Collections;
 namespace Defend.TestScript
 {
     /// <summary>
@@ -11,15 +11,18 @@ namespace Defend.TestScript
         #region Variables
 
         //체력관련
-        [SerializeField] private float maxHealth = 100f;    //최대 Hp
-        public float CurrentHealth { get; private set; }    //현재 Hp
+        public float maxHealth = 100f;    //최대 Hp
+        public float CurrentHealth { get;  set; }    //현재 Hp
 
         //아머 관련
         [SerializeField] private float baseArmor = 5f;
         public float CurrentArmor { get; private set; }
 
         private bool isDeath = false;                       //죽음 체크
-
+        //체젠 관련
+        public float RgAmount;          //체젠량
+        public float Rginterval;        //체젠 간격
+        [SerializeField] private bool isHpTime = false;                      //체젠 체크
         //UnityAction
         public UnityAction<float> OnDamaged;
         public UnityAction OnDie;
@@ -30,12 +33,46 @@ namespace Defend.TestScript
 
         #endregion
         // Start is called once before the first execution of Update after the MonoBehaviour is created
-        void Start()
+        void Awake()
         {
             CurrentHealth = maxHealth;
             CurrentArmor = baseArmor;
+            HPTime(RgAmount, Rginterval);//1초마다 1의 체력을 회복
         }
 
+       
+        //맥스 체력 올리기
+        public void IncreaseMaxHealth(float amount)
+        {
+            maxHealth += amount;
+            Debug.Log("Max Health up " + maxHealth);
+        }
+
+        //체력 리젠
+        public void HPTime(float amount, float interval)
+        {
+            StartCoroutine(RegenerateHealth(amount, interval));
+        }
+
+        public IEnumerator RegenerateHealth(float amount, float interval)
+        {
+            if (isHpTime == true)
+            {
+              
+
+                while (true)
+                {
+                    amount = RgAmount;
+                   
+                    CurrentHealth += amount;
+                    // 최대 체력을 초과하지 않도록 제한
+                    CurrentHealth = Mathf.Min(CurrentHealth, maxHealth);
+                 
+                    // 지정된 간격만큼 대기
+                    yield return new WaitForSeconds(interval);
+                }
+            }
+        }
         //힐
         public void Heal(float amount)
         {
