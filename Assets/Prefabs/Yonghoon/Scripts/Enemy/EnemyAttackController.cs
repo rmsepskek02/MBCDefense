@@ -1,7 +1,7 @@
 using Defend.TestScript;
 using UnityEngine;
 using UnityEngine.Events;
-using static UnityEngine.XR.OpenXR.Features.Interactions.HTCViveControllerProfile;
+//using static UnityEngine.XR.OpenXR.Features.Interactions.HTCViveControllerProfile;
 
 namespace Defend.Enemy
 {
@@ -43,7 +43,7 @@ namespace Defend.Enemy
 
         private void Awake()
         {
-            attackTarget = FindAnyObjectByType<HealthBasedCastle1>().transform;
+            attackTarget = FindAnyObjectByType<HealthBasedCastle>().transform;
 
             // ÂüÁ¶
             moveController = GetComponent<EnemyMoveController>();

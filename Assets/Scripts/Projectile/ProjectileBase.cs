@@ -41,6 +41,8 @@ namespace Defend.Projectile
             Destroy(effect, projectileInfo.effectTime);
             // Projectile 삭제 
             Destroy(this.gameObject);
+
+            Debug.Log("TEST");
         }
 
         // 타겟의 폭발 범위 만큼 범위공격
