@@ -13970,7 +13970,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &499295251
 Transform:
   m_ObjectHideFlags: 0
@@ -14911,10 +14911,6 @@ PrefabInstance:
     - target: {fileID: 1964954065753519856, guid: 9c95e8364e95eb240a78bb9e739076e6, type: 3}
       propertyPath: m_Name
       value: CannonTower_3
-      objectReference: {fileID: 0}
-    - target: {fileID: 4361971774183273056, guid: 9c95e8364e95eb240a78bb9e739076e6, type: 3}
-      propertyPath: towerInfo.rotationSpeed
-      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 8515086370889944062, guid: 9c95e8364e95eb240a78bb9e739076e6, type: 3}
       propertyPath: m_LocalPosition.x
@@ -43331,10 +43327,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 96111215}
     m_Modifications:
-    - target: {fileID: 2691668377719302157, guid: a0d53067344fbbe48a6a38161c36e06b, type: 3}
-      propertyPath: towerInfo.rotationSpeed
-      value: 3
-      objectReference: {fileID: 0}
     - target: {fileID: 7597333470338351555, guid: a0d53067344fbbe48a6a38161c36e06b, type: 3}
       propertyPath: m_LocalPosition.x
       value: -8.140505
@@ -47163,7 +47155,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1767935032
 Transform:
   m_ObjectHideFlags: 0
@@ -52694,6 +52686,52 @@ Transform:
   m_Children: []
   m_Father: {fileID: 80705761}
   m_LocalEulerAnglesHint: {x: -90, y: 0, z: 90}
+--- !u!1 &1999165449
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1999165451}
+  - component: {fileID: 1999165450}
+  m_Layer: 0
+  m_Name: GameObject
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1999165450
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1999165449}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 92d0f237550cafc4fba8622733faf5a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  target: {fileID: 0}
+  towers: []
+--- !u!4 &1999165451
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1999165449}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -4.545, y: 1.6, z: -8.36808}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &1999226302
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -130785,3 +130823,4 @@ SceneRoots:
   - {fileID: 715417497}
   - {fileID: 137741368}
   - {fileID: 1335844119}
+  - {fileID: 1999165451}
