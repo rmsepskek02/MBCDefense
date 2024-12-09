@@ -82,7 +82,7 @@ namespace Defend.Utillity
             get { return manaRegenRatio; }
             set
             {
-                manaRegenRatio *= value;
+                manaRegenRatio = value;
             }
         }
         [SerializeField] private float healthRegenRatio = 1f;
@@ -91,7 +91,7 @@ namespace Defend.Utillity
             get { return healthRegenRatio; }
             set
             {
-                healthRegenRatio *= value;
+                healthRegenRatio = value;
             }
         }
         #endregion

@@ -224,7 +224,7 @@ namespace Defend.TestScript
 
         private void UpdateArmor(float amount)
         {
-            Debug.Log($"{amount}만큼 방어력 증/감소됨!");
+            //Debug.Log($"{amount}만큼 방어력 증/감소됨!");
             PlayEffect(amount);
         }
 
