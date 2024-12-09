@@ -28,6 +28,7 @@ namespace Defend.Enemy
         private Health health;
         private EnemyMoveController moveController;
         private EnemyAttackController attackController;
+        private EnemyController enemyController;
 
         private void Start()
         {
@@ -35,6 +36,7 @@ namespace Defend.Enemy
             health = GetComponent<Health>();
             moveController = GetComponent<EnemyMoveController>();
             attackController = GetComponent<EnemyAttackController>();
+            enemyController = GetComponent<EnemyController>();
 
             //변화를 줄 UnityActions
             //Health 변경
@@ -46,22 +48,18 @@ namespace Defend.Enemy
 
             //공격 능력치 변경
             attackController.AttackDamageChanged += ChangeDamage;
-            attackController.AttackDelayChanged += ChangeDelay;
 
             //이동속도 변경
             moveController.MoveSpeedChanged += ChangeSpeed;
 
             //초기화
             enemyHealth = health.CurrentHealth;
-
             enemyArmor = health.CurrentArmor;
-
             enemyAttackDamage = attackController.CurrentAttackDamage;
             enemyAttackDelay = attackController.CurrentAttackDelay;
-            type = attackController.type;
-
+            type = enemyController.type;
             enemySpeed = moveController.CurrentSpeed;
-            
+
         }
 
         private void ChangeDelay(float amount)
@@ -84,7 +82,7 @@ namespace Defend.Enemy
             enemyHealth += amount;
         }
 
-        private void ChangeSpeed(float value)
+        private void ChangeSpeed(float value, float rate)
         {
             enemySpeed = value;
         }

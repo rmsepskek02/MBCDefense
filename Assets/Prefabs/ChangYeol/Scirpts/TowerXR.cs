@@ -9,7 +9,7 @@ namespace Defend.UI
     public class TowerXR : XRSimpleInteractable
     {
         #region Variables
-        public TowerInfo towerInfo;
+        public TowerInfo[] towerInfo = new TowerInfo[12];
 
         //ºôµå¸Å´ÏÀú °´Ã¼
         private BuildManager buildManager;
@@ -17,7 +17,14 @@ namespace Defend.UI
 
         private void Start()
         {
-            
+            buildManager = BuildManager.Instance;
+            for (int i = 0; i < towerInfo.Length; i++)
+            {
+                towerInfo[i] = buildManager.buildMenu.towerinfo[i];
+                towerInfo[i].upgradeTower = buildManager.buildMenu.towerinfo[i].upgradeTower;
+                towerInfo[i].projectile.tower = buildManager.buildMenu.towerinfo[i].projectile.tower;
+                towerInfo[i].projectile = buildManager.buildMenu.towerinfo[i].projectile;
+            }
         }
         protected override void OnSelectExited(SelectExitEventArgs args)
         {
@@ -27,18 +34,11 @@ namespace Defend.UI
         protected override void OnSelectEntered(SelectEnterEventArgs args)
         {
             base.OnSelectEntered(args);
-            //buildManager.SelectTile(this);
-        }
-
-        protected override void OnActivated(ActivateEventArgs args)
-        {
-            base.OnActivated(args);
             buildManager.SelectTile(this);
         }
-        void OnActionUI()
+        private void OnCollisionStay(Collision collision)
         {
-            Debug.Log("act");
-            buildManager.SelectTile(this);
+            Debug.Log("ddd");
         }
     }
 }

@@ -54,11 +54,9 @@ namespace Defend.UI
 
         //타일 UI
         public UpgradeAndSell menu;
+        public BuildMenu buildMenu;
         //선택한 타워
         private TowerXR tower;
-
-        public bool isInstall;
-        public bool isSelect;
 
         /*//선택한 적
         public EnemyState enemyStats;
@@ -72,7 +70,7 @@ namespace Defend.UI
             return towerInfo;
         }
         //매개변수로 받은 타워 프리팹을 설치할 타워에 저장
-        public void SetTowerToBuild(TowerInfo Tower/*,Sprite sprite*/)
+        public void SetTowerToBuild(TowerInfo Tower)
         {
             towerInfo = Tower;
             /*TowerSprite = sprite;*/

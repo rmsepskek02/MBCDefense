@@ -5055,7 +5055,7 @@ Transform:
   m_GameObject: {fileID: 9131892694948468726}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 3.19, y: 0.5, z: -20.200003}
+  m_LocalPosition: {x: 0, y: 0.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -5087,11 +5087,13 @@ MonoBehaviour:
     maxHealth: 200
     maxMana: 400
     armor: 5
+    healthRegen: 1
+    manaRegen: 1
     cost1: 1
     cost2: 2
     cost3: 3
     cost4: 4
-    upgradeTower: {fileID: 0}
+    upgradeTower: {fileID: 2604370016932081696, guid: 36d3640aa7caa10418c32bcc41227ffd, type: 3}
     projectile:
       tower: {fileID: 9131892694948468726}
       prefab: {fileID: 3872483287731172150, guid: a5156b7c81d16f741bcdaa6d950fe913, type: 3}
@@ -5125,6 +5127,8 @@ MonoBehaviour:
   maxMana: 0
   currentMana: 0
   currentArmor: 0
+  manaRegenRatio: 1
+  healthRegenRatio: 1
 --- !u!1001 &5401142052435523439
 PrefabInstance:
   m_ObjectHideFlags: 0

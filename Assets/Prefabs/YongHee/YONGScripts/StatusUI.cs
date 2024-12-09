@@ -38,6 +38,7 @@ namespace Defend.UI
         {
             transform.LookAt(transform.position + target.forward);
             // TODO :: 델리게이트 사용해서 넘기자
+            if (status == null) return;
             SetFillHealth();
             SetHealthText();
             SetFillMana();

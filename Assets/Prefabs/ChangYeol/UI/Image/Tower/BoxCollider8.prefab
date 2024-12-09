@@ -29,7 +29,7 @@ Transform:
   m_GameObject: {fileID: 38444221805076546}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.5, z: -5.04}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -67,15 +67,18 @@ MonoBehaviour:
     cost4: 4
     upgradeTower: {fileID: 0}
     projectile:
+      tower: {fileID: 0}
       prefab: {fileID: 1781035392759507797, guid: c6c56c03db5155e41ab6474b89a9c1c4, type: 3}
       effectPrefab: {fileID: 4996507434419837056, guid: 05645285958abb94c81af9e87c7205c6, type: 3}
       effectTime: 3
       attack: 30
       moveSpeed: 50
       attackRange: 4
-  gizmoColor: {r: 0, g: 1, b: 0, a: 1}
-  sphereRadius: 7
-  lineLength: 10
+      debuffRatio: 0
+  gizmo:
+    gizmoColor: {r: 0, g: 1, b: 0, a: 1}
+    sphereRadius: 0
+    lineLength: 10
 --- !u!114 &4351527786859131257
 MonoBehaviour:
   m_ObjectHideFlags: 0
