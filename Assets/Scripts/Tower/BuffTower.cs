@@ -28,8 +28,7 @@ namespace Defend.Tower
         [SerializeField] private bool isOn => status.CurrentMana >= manaAmount;
         [SerializeField] private GameObject effectObj;
         [SerializeField] protected BuffContents buffContents;
-        [SerializeField] protected ParticleSystem buffEffect;
-        [SerializeField] protected ParticleSystem debuffEffect;
+        
         protected override void Start()
         {
             status = GetComponent<Status>();
@@ -81,10 +80,6 @@ namespace Defend.Tower
                 if (buffTower != null) continue;
 
                 tower.BuffTower(buffContents, false);
-
-                // 효과 이펙트 적용
-                ParticleSystem effect = Instantiate(buffEffect, tower.gameObject.transform);
-                Destroy(effect.gameObject, buffContents.duration);
             }
 
             // 슛 타임 초기화
