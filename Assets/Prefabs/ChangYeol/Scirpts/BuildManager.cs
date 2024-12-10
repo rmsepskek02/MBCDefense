@@ -1,8 +1,7 @@
-using Defend.Enemy;
 using Defend.Player;
 using Defend.Tower;
+using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 namespace Defend.UI
@@ -40,6 +39,11 @@ namespace Defend.UI
 
         public WarningWindow warningWindow;
 
+        public Button Sellbutton;
+        public Button UpgradeButton;
+
+        public bool IsUpgrade;
+
         //선택한 타워의 건설한 비용을 자지고 있는지
         public bool HasBuildMoney
         {
@@ -76,7 +80,7 @@ namespace Defend.UI
             /*TowerSprite = sprite;*/
             DeselectTile();
         }
-        public void SelectTile(TowerXR towerXR)
+        public void SelectTower(TowerXR towerXR)
         {
             //같은 타워를 선택하면 HideUI
             if (towerXR == tower)
@@ -91,14 +95,19 @@ namespace Defend.UI
             towerInfo = null;
             //Debug.Log("타일 UI 보여주기");
             menu.ShowTileUI(towerXR);
+            UpgradeButton.onClick.AddListener(towerXR.UpgradeTower);
+            Sellbutton.onClick.AddListener(towerXR.SellTower);
         }
         //선택 해제
         public void DeselectTile()
         {
             //Debug.Log("타일 UI 감추기");
             menu.HidetileUI();
+            UpgradeButton.onClick.RemoveAllListeners();
+            Sellbutton.onClick.RemoveAllListeners();
             //선택한 타일 초기화하기
             tower = null;
+            
         }
         /*public EnemyState GetEnemyToBuild()
         {

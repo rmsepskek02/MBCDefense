@@ -1,6 +1,7 @@
 using Defend.TestScript;
 using Defend.Utillity;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
@@ -17,18 +18,20 @@ namespace Defend.Enemy
         [SerializeField] private float baseSpeed = 5f;
         [SerializeField] public float CurrentSpeed { get; private set; }   //이동 속도
 
+        private float originSpeed;
+
         // 슬로우를 적용한 주체와 비율을 저장하는 딕셔너리
         private Dictionary<GameObject, float> moveSources = new Dictionary<GameObject, float>();
 
         private Health health;
-        //Arrive상태로 변경할 animator
-        //private Animator animator;
+        private EnemyController enemyController;
 
         private Transform target;   //이동할 목표지점        
 
         private int wayPointIndex = 0;  //wayPoints 배열을 관리하는 인덱스
 
-        private bool isDeath;
+        private bool isDeath = false;   //죽었는지 확인
+        private bool isChanneling = false;
 
         //이동속도 변화를 감지할 UnityAction
         public UnityAction<float, float> MoveSpeedChanged;
@@ -41,22 +44,28 @@ namespace Defend.Enemy
             //참조
             //animator = GetComponent<Animator>();
             health = GetComponent<Health>();
+            enemyController = GetComponent<EnemyController>();
 
             //초기화
             CurrentSpeed = baseSpeed;
-            isDeath = false;
 
             //첫번째 목표지점 셋팅
             wayPointIndex = 0;
             target = WayPoints.points[wayPointIndex];
 
+
+        }
+
+        private void Start()
+        {
             //Unity Action
             health.OnDie += OnDie;
+            enemyController.OnChanneling += OnChanneling;
         }
 
         private void Update()
         {
-            if (isDeath) return;
+            if (isDeath || isChanneling) return;
             Move();
         }
 
@@ -141,6 +150,9 @@ namespace Defend.Enemy
 
             // 이동 속도 갱신
             CurrentSpeed = baseSpeed * (1.0f + totalRate);
+
+            originSpeed = CurrentSpeed;
+
             //이동속도는 baseSpeed를 기반으로 +-50%를 초과할 수 없음
             //CurrentSpeed = Mathf.Clamp(CurrentSpeed, (baseSpeed / 2), (baseSpeed * 2));
 
@@ -171,6 +183,15 @@ namespace Defend.Enemy
         //    MoveSpeedChanged?.Invoke(CurrentSpeed);
         //}
 
+        public IEnumerator SetZeroSpeed()
+        {
+            //originSpeed = CurrentSpeed;
+            CurrentSpeed = 0.0f;
+            yield return new WaitForSeconds(5f);
+            CurrentSpeed = originSpeed;
+        }
+
+
         //목표지점 도착 처리
         void Arrive()
         {
@@ -183,6 +204,11 @@ namespace Defend.Enemy
         private void OnDie()
         {
             isDeath = true;
+        }
+
+        private void OnChanneling()
+        {
+            isChanneling = !isChanneling;
         }
     }
 }

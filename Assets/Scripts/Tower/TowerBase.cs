@@ -47,13 +47,16 @@ namespace Defend.Tower
         LineRenderer lineRenderer;                          // 라인 랜더러
         #endregion
 
+        protected virtual void Awake()
+        {
+            status = GetComponent<Status>();
+            status.Init(towerInfo);
+        }
+
         protected virtual void Start()
         {
             // 참조
             animator = GetComponent<Animator>();
-            status = GetComponent<Status>();
-
-            status.Init(towerInfo);
 
             #region Layer 및 collider 사용 => 미사용
             // Layer 설정
@@ -225,7 +228,8 @@ namespace Defend.Tower
         }
 
         // 타워 강화 (지속시간, 공격력, 방어력, 연사력, 공격사거리, 체력재생, 마나재생)
-        public void BuffTower(BuffContents buffContents)
+        // isPermanent 영구적인 버프인지 아닌지
+        public void BuffTower(BuffContents buffContents, bool isPermanent)
         {
             // 버프 적용
             towerInfo.projectile.attack += buffContents.atk;
@@ -236,7 +240,10 @@ namespace Defend.Tower
             status.ManaRegenRatio *= buffContents.manaRegen;
 
             // 복구 Coroutine 실행
-            StartCoroutine(ResetTower(buffContents));
+            if (isPermanent == false)
+            {
+                StartCoroutine(ResetTower(buffContents));
+            }
         }
 
         // 타워 복구 (지속시간, 공격력, 방어력, 연사력, 공격사거리, 체력재생, 마나재생)
