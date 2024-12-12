@@ -1,6 +1,5 @@
 using Defend.TestScript;
 using Defend.Utillity;
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -15,7 +14,7 @@ namespace Defend.Enemy
     {
         //필드
         #region Variable
-        [SerializeField] private float baseSpeed = 5f;
+        public float baseSpeed = 5f;
         [SerializeField] public float CurrentSpeed { get; private set; }   //이동 속도
 
         private float originSpeed;
@@ -142,7 +141,18 @@ namespace Defend.Enemy
             // 모든 슬로우 비율을 합산
             foreach (var rate in moveSources.Values)
             {
-                totalRate += rate;
+                if (enemyController.type == EnemyType.Boss)
+                {
+                    if (rate > 0)
+                    {
+                        totalRate += rate;
+                    }
+                    Debug.Log($"{enemyController.type}");
+                }
+                else
+                {
+                    totalRate += rate;
+                }
             }
 
             //증감효과는 슬로우 = 66%, 증가 = 50%로 제한
@@ -156,7 +166,7 @@ namespace Defend.Enemy
             //이동속도는 baseSpeed를 기반으로 +-50%를 초과할 수 없음
             //CurrentSpeed = Mathf.Clamp(CurrentSpeed, (baseSpeed / 2), (baseSpeed * 2));
 
-            Debug.Log("최종 속도 = " + CurrentSpeed);
+            //Debug.Log("최종 속도 = " + CurrentSpeed);
 
             // 속도 변경 이벤트 호출
             MoveSpeedChanged?.Invoke(CurrentSpeed, totalRate);
@@ -208,6 +218,7 @@ namespace Defend.Enemy
 
         private void OnChanneling()
         {
+            Debug.Log("호출됐다! = " + isChanneling);
             isChanneling = !isChanneling;
         }
     }

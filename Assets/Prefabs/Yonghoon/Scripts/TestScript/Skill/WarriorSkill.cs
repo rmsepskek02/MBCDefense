@@ -9,45 +9,29 @@ namespace Defend.Enemy.Skill
     /// </summary>
     public class WarriorSkill : SkillBase
     {
-        #region Variables
-        [SerializeField] private float increaseAttackPowerAmount = 5f;
-        [SerializeField] private float skillDuration = 5f;  // 공격력 증가 지속 시간
-        [SerializeField] private bool hasSkill = false;
-        #endregion
-
-        #region Test용 Range
-        [SerializeField] private float range = 5f;
-        #endregion
-         
         public override void ActivateSkill()
         {
             hasSkill = true;
 
-            Debug.Log("전사가 공격력 증가 버프 사용!");
+            //Debug.Log("전사가 공격력 증가 버프 사용!");
 
-            // 범위 내 적 탐색
-            Collider[] hitEnemies = Physics.OverlapSphere(transform.position, range);
+            // 범위 내 특정 레이어의 Collider 검색
+            int layerMask = LayerMask.GetMask("Enemy", "Boss");
+            Collider[] hitColliders = Physics.OverlapSphere(transform.position, range, layerMask);
 
-            foreach (var enemyCollider in hitEnemies)
+            foreach (var enemyCollider in hitColliders)
             {
                 var enemyStats = enemyCollider.GetComponentInParent<EnemyAttackController>();
                 if (enemyStats != null)
                 {
-                    enemyStats.ChangedAttackDamage(increaseAttackPowerAmount); // 공격력 증가
-                    Debug.Log($"{enemyStats.gameObject.name}의 공격력이 {increaseAttackPowerAmount}만큼 증가했습니다!");
+                    enemyStats.ChangedAttackDamage(amount); // 공격력 증가
+                    //Debug.Log($"{enemyStats.gameObject.name}의 공격력이 {amount}만큼 증가했습니다!");
 
                     // 지속 시간 동안 공격력 증가 후 원래 값으로 복귀
                     enemyStats.StartCoroutine(RestoreAttackAfterDuration(enemyStats, skillDuration));
                 }
             }
-            //ShowEffect(activator, range);
         }
-
-        //추후 이펙트를 추가하게되면 설정
-        //private void ShowEffect(Transform activator, float range)
-        //{
-        //    Debug.Log($"Warrior 포효 효과 발생! 범위: {range}");
-        //}
 
         // 공격력 증가 후 지속 시간 동안만 유지되게 하는 코루틴
         private IEnumerator RestoreAttackAfterDuration(EnemyAttackController enemyStats, float duration)
@@ -55,8 +39,8 @@ namespace Defend.Enemy.Skill
             yield return new WaitForSeconds(duration);
 
             // 공격력을 원래 값으로 복구
-            enemyStats.ChangedAttackDamage(-increaseAttackPowerAmount);
-            Debug.Log($"{enemyStats.gameObject.name}의 방어력이 {increaseAttackPowerAmount}만큼 다시 감소했습니다!");
+            enemyStats.ChangedAttackDamage(-amount);
+            //Debug.Log($"{enemyStats.gameObject.name}의 방어력이 {amount}만큼 다시 감소했습니다!");
         }
 
         public override bool CanActivateSkill(float healthRatio)

@@ -5,24 +5,21 @@ namespace Defend.Enemy.Skill
 {
     public class WizardSkill : SkillBase
     {
-
-        [SerializeField] private float skillCooldown = 5f; // 스킬 발동 주기
+        #region Variables
         private float lastSkillTime = -Mathf.Infinity; // 마지막 스킬 발동 시간
-
-        #region Test용 Range
-        [SerializeField] private float range = 5f;
         #endregion
 
         public override void ActivateSkill()
         {
-            Debug.Log("Wizard uses Heal skill!");
+            //Debug.Log("Wizard uses Heal skill!");
 
             float healAmount = gameObject.GetComponent<EnemyAttackController>().CurrentAttackDamage;
 
-            Debug.Log(healAmount);
+            //Debug.Log(healAmount);
 
-            // 범위 내 모든 Collider 검색
-            Collider[] hitColliders = Physics.OverlapSphere(transform.position, range);
+            // 범위 내 특정 레이어의 Collider 검색
+            int layerMask = LayerMask.GetMask("Enemy", "Boss");
+            Collider[] hitColliders = Physics.OverlapSphere(transform.position, range, layerMask);
 
             foreach (var collider in hitColliders)
             {
@@ -31,19 +28,12 @@ namespace Defend.Enemy.Skill
                 if (enemyStats != null)
                 {
 
-                    enemyStats.Heal(healAmount); // 방어력 증가
-                    Debug.Log($"{enemyStats.gameObject.name}의 체력이 {healAmount}만큼 증가했습니다!");
+                    enemyStats.Heal(healAmount); // 힐
+                    //Debug.Log($"{enemyStats.gameObject.name}의 체력이 {healAmount}만큼 증가했습니다!");
                 }
             }
-
-            // 선택적 이펙트
-            //ShowEffect(activator, range);
+            lastSkillTime = Time.time;
         }
-
-        //private void ShowEffect(Transform activator, float range)
-        //{
-        //    Debug.Log($"Heal 효과 발생! 범위: {range}");
-        //}
 
         public override bool CanActivateSkill(float healthRatio)
         {

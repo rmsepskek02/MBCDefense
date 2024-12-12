@@ -15,14 +15,15 @@ namespace Defend.Enemy
 
         // 웨이브 간 대기 시간
         public float spawnTimer = 180f;
-        private float countdown = 0f; // 다음 웨이브 시작까지 남은 시간
+        [HideInInspector] public float countdown = 0f; // 다음 웨이브 시작까지 남은 시간
 
         // 현재 스폰 중인지 여부를 나타내는 상태 플래그
         [SerializeField] private bool isSpawn;
+        [SerializeField] private bool onPressSkipBtn;
 
         // 웨이브 데이터를 배열로 관리
         public ListWaveData[] waves;
-        private int waveCount; // 현재 웨이브 번호
+        public int waveCount; // 현재 웨이브 번호
 
         // 현재 살아있는 몬스터의 총 개수 (모든 웨이브 공유)
         public static int enemyAlive;
@@ -55,8 +56,8 @@ namespace Defend.Enemy
                 countdown = spawnTimer;     // 다음 웨이브를 위한 타이머 리셋
             }
 
-            // 스폰 중이 아니고, 웨이브 몬스터를 전부 잡았을때 카운트다운 감소
-            if (!isSpawn && enemyAlive == 0)
+            // 스폰 중이 아니고, 웨이브 몬스터를 전부 잡았을때, 또는 스킵버튼을 눌렀을때 카운트다운 감소
+            if ((!isSpawn && enemyAlive == 0 )|| onPressSkipBtn)
             {
                 countdown -= Time.deltaTime; // 타이머를 감소
                 countdown = Mathf.Clamp(countdown, 0f, Mathf.Infinity); // 타이머 값 제한
@@ -115,6 +116,7 @@ namespace Defend.Enemy
 
         public void SkipTimer()
         {
+            onPressSkipBtn = true;
             countdown = 5f;
         }
     }

@@ -1,5 +1,7 @@
 using Defend.XR;
+using System;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace Defend.UI
 {
@@ -9,16 +11,19 @@ namespace Defend.UI
         [SerializeField] private GameObject gameMenuCanvas;
         [SerializeField] private GameObject buildCanvas;
         [SerializeField] private GameObject upgradeCanvas;
-        [SerializeField] private GameObject shopCanvas;
+        [SerializeField] private GameObject towerCanvas;
         [SerializeField] private GameObject skilCanvas;
+        [SerializeField] private Animator[] animators;
+        public InputActionProperty property;
         private bool isOpen;
         #endregion
 
         private void Update()
         {
             //Y버튼 누를시 메뉴 오픈
-            if (InputManager.Instance.GetRightSecondaryButton() || Input.GetKeyDown(KeyCode.X))
+            if (property.action.WasCompletedThisFrame() || Input.GetKeyDown(KeyCode.X))
             {
+                Debug.Log("33333");
                 if (!isOpen)
                 {
                     // 메뉴가 열리지 않은 경우, gameMenuCanvas 열기
@@ -36,10 +41,16 @@ namespace Defend.UI
         public void CloseAllCanvases()
         {
             isOpen = false;
+            foreach (var animator in animators)
+            { // 애니메이션 초기화
+                animator.Rebind();
+                animator.Update(0); 
+            }
+
             gameMenuCanvas.SetActive(false);
             buildCanvas.SetActive(false);
             upgradeCanvas.SetActive(false);
-            shopCanvas.SetActive(false);
+            towerCanvas.SetActive(false);
             skilCanvas.SetActive(false);
         }
 
@@ -57,11 +68,11 @@ namespace Defend.UI
             upgradeCanvas.SetActive(true );
         }
 
-        public void Shop()
+        public void Tower()
         {
             //Debug.Log("Shopopen");
             gameMenuCanvas.SetActive(false);
-            shopCanvas.SetActive(true);
+            towerCanvas.SetActive(true);
         }
 
         public void Skill()

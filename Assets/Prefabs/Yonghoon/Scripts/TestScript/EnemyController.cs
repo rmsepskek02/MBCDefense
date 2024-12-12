@@ -5,6 +5,7 @@ using Defend.item;
 using Defend.Utillity;
 using Defend.Enemy.Skill;
 using UnityEngine.Events;
+using System;
 
 namespace Defend.TestScript
 {
@@ -50,16 +51,17 @@ namespace Defend.TestScript
 
         private Health health;//체력담당 컴포넌트
         private EnemyMoveController moveController;//이동담당 컴포넌트
+
         private EnemyAttackController attackController;//공격담당 컴포넌트
+        private bool isAttacking = false;
 
         public Vector3 positionOffset;//미사일이 날아와서 부딪힐 곳을 offset으로 할당
         public float scaleOffset;//몬스터마다 타워쪽 이펙트에 스케일을 조절하기위한 scaleOffset
 
         //떨어뜨릴 골드 개수
-        [SerializeField] private int rewardGoldCount;
+        public int rewardGoldCount;
         public int RewardGoldCount { get { return rewardGoldCount; } private set { rewardGoldCount = value; } } //참조가 필요시 사용할 레퍼런스
         public GameObject goldPrefab;           //코인 프리팹
-        public float scatterForce = 5f;         //흩뿌릴 힘
         public Transform offsetTransform;       //생성될 위치 (위로 조정)
 
 
@@ -94,7 +96,8 @@ namespace Defend.TestScript
             //버프와 디버프관련 UnityAction
             health.Armorchange += UpdateArmor;
             moveController.MoveSpeedChanged += UpdateSpeed;
-
+            attackController.AttackDamageChanged += UpdateAttactDamage;
+            attackController.OnAttacking += OnAttacking;
 
             // 반짝임 효과 초기화
             bodyFlashMaterialPropertyBlock = new MaterialPropertyBlock();
@@ -129,13 +132,15 @@ namespace Defend.TestScript
                     skill = gameObject.GetComponent<WizardSkill>();
                     break;
                 case EnemyType.Boss:
-                    //skill = gameObject.GetComponent<BossSkill>();
+                    skill = gameObject.GetComponent<BossSkill>();
                     break;
                 default:
                     Debug.LogWarning("Unknown EnemyType. No skill assigned.");
                     break;
             }
         }
+
+
 
         void Update()
         {
@@ -145,32 +150,15 @@ namespace Defend.TestScript
                 UpdateEffect();
             }
 
-            if (!skill)
+            if (skill.CanActivateSkill(health.GetRatio()) && !channeling && !isAttacking)
             {
-                Debug.Log("스킬이 설정되지 않았습니다");
-                return;
-            }
-
-            if (skill.CanActivateSkill(health.GetRatio()) && !channeling)
-            {
-                ChangeChannelingStatus();
                 animator.SetTrigger(Constants.ENEMY_ANIM_SKILLTRIGGER);
-            }
-
-
-
-            if (Input.GetKeyDown(KeyCode.E))
-            {
-                OnHeal(1);
-            }
-            if (Input.GetKeyDown(KeyCode.T))
-            {
-                PlayEffect(0.1f);
             }
         }
 
-        private void ChangeChannelingStatus()
+        public void ChangeChannelingStatus()
         {
+            Debug.Log("EnemyController는 문제가 없다!");
             channeling = !channeling;
             OnChanneling?.Invoke();
         }
@@ -184,7 +172,7 @@ namespace Defend.TestScript
         private void OnHeal(float amount)
         {
             //TriggerEffect(healEffectGradient); // 힐 효과 적용
-            Debug.Log("힐 받음");
+            //Debug.Log("힐 받음");
             healParticleSystem.Play();
         }
 
@@ -261,14 +249,20 @@ namespace Defend.TestScript
             // rate에 따라 버프 또는 디버프 효과 실행
             PlayEffect(rate);
 
-            Debug.Log($"before anim speed = {animator.speed}, rate = {rate}");
+            //Debug.Log($"before anim speed = {animator.speed}, rate = {rate}");
             animator.speed = animatorSpeed * (1.0f + rate);
-            Debug.Log($"after anim speed = {animator.speed}");
+            //Debug.Log($"after anim speed = {animator.speed}");
         }
 
         private void UpdateArmor(float amount)
         {
-            Debug.Log($"{amount}만큼 방어력 증/감소됨!");
+            //Debug.Log($"{amount}만큼 방어력 증/감소됨!");
+            PlayEffect(amount);
+        }
+
+        private void UpdateAttactDamage(float amount)
+        {
+            //Debug.Log($"{amount}만큼 공격력 증/감소됨!");
             PlayEffect(amount);
         }
 
@@ -282,6 +276,12 @@ namespace Defend.TestScript
             {
                 debuffParticleSystem.Play();
             }
+        }
+
+        //공격중인지 확인하는 UnityAction
+        private void OnAttacking()
+        {
+            isAttacking = !isAttacking;
         }
     }
 }

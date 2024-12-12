@@ -1,10 +1,6 @@
 using Defend.Tower;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.XR.Interaction.Toolkit.Interactors.Visuals;
-
 namespace Defend.UI
 {
     public class BuildMenu : MonoBehaviour
@@ -12,18 +8,26 @@ namespace Defend.UI
         #region Variables
         private BuildManager buildManager;
         //타워들의 정보값
-        public BuildTowerUI Ballista;
-        public BuildTowerUI Bat;
-        public BuildTowerUI Cannon;
-        public BuildTowerUI Crossbow;
-
+        public TowerInfo[] towerinfo;
+        //타워들의 이미지
+        public Sprite[] towerSprite;
+        //타워들의 박스콜라이더
+        public BoxCollider[] boxes;
+        //빌드 메뉴의 타워 버튼
+        public Button[] buttons;
+        //설치 위치를 보여주는 가짜 타워
         public GameObject[] falsetowers;
-
         public Tile tile;
-
+        //빌드 메뉴 UI
         public GameObject BuildUI;
+        //빌드 메뉴에 타워 선택시 선택한 타워의 정보를 보여주는 UI
         public GameObject buildpro;
+        //index번째 타워를 선택하면 저장하는 값 
         public int indexs;
+        public int levelindex;
+        //reticle이 활성화 비활성화 유무
+        public bool isReticle = false;
+        public bool istowerup = false;
         #endregion
 
         private void Start()
@@ -33,47 +37,22 @@ namespace Defend.UI
         }
 
 
-        //기본 터렛 버튼을 클릭시 호출
-        public void SelectBallista(int index)
+        //타워 버튼을 클릭시 호출
+        public void SelectTower(int index)
         {
             indexs = index;
-            buildManager.SetTowerToBuild(Ballista.towerInfos[index]);
-            tile.BuildTower(Ballista.towerBoxCollider[index].size, Ballista.towerBoxCollider[index].center);
+            isReticle = true;
+            istowerup = true;
             BuildUI.SetActive(false);
         }
-        public void SelectBat(int index)
+        public void SetLevel(int level)
         {
-            indexs = index;
-            buildManager.SetTowerToBuild(Bat.towerInfos[index]);
-            tile.BuildTower(Bat.towerBoxCollider[index].size, Bat.towerBoxCollider[index].center);
-            BuildUI.SetActive(false);
-        }
-        public void SelectCannon(int index)
-        {
-            indexs = index;
-            buildManager.SetTowerToBuild(Cannon.towerInfos[index]);
-            tile.BuildTower(Cannon.towerBoxCollider[index].size, Cannon.towerBoxCollider[index].center);
-            BuildUI.SetActive(false);
-        }
-        public void SelectCrossbow(int index)
-        {
-            indexs = index;
-            buildManager.SetTowerToBuild(Crossbow.towerInfos[index]);
-            tile.BuildTower(Crossbow.towerBoxCollider[index].size, Crossbow.towerBoxCollider[index].center);
-            BuildUI.SetActive(false);
+            levelindex = level;
         }
         public void BuildMenuUI()
         {
             BuildUI.SetActive(!BuildUI.activeSelf);
-            Destroy(tile.lineVisual.reticle);
-            tile.lineVisual.reticle = null;
-        }
-        IEnumerator TriggerWarning(TowerInfo tower)
-        {
-            buildManager.warningWindow.ShowWarning($"There's an {tower.upgradeTower.ToString()} in front of me");
-            yield return new WaitForSeconds(2);
-            buildManager.warningWindow.ShowWarning($"Create it somewhere else");
-            yield return new WaitForSeconds(5);
+            isReticle=false;
         }
     }
 }
