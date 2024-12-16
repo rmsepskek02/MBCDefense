@@ -23,7 +23,7 @@ namespace Defend.UI
             //Y버튼 누를시 메뉴 오픈
             if (property.action.WasCompletedThisFrame() || Input.GetKeyDown(KeyCode.X))
             {
-                Debug.Log("33333");
+                //Debug.Log("33333");
                 if (!isOpen)
                 {
                     // 메뉴가 열리지 않은 경우, gameMenuCanvas 열기
@@ -41,12 +41,7 @@ namespace Defend.UI
         public void CloseAllCanvases()
         {
             isOpen = false;
-            foreach (var animator in animators)
-            { // 애니메이션 초기화
-                animator.Rebind();
-                animator.Update(0); 
-            }
-
+           
             gameMenuCanvas.SetActive(false);
             buildCanvas.SetActive(false);
             upgradeCanvas.SetActive(false);

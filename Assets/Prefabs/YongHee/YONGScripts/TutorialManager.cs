@@ -28,6 +28,8 @@ namespace Defend.Tutorial
         public GameObject tree;                 // 튜토리얼용 tree
         public GameObject castle;               // 튜토리얼용 castle
         public GameObject enemy;                // 튜토리얼용 enemy
+        public GameObject axe;                  // 플레이어 Axe
+        public GameObject PickAxe;              // 플레이어 PickAxe
         private string guideString;             // UI에 나타나는 문구
         private Health health;                  // castle의 health 참조
         public float fontSize;                  // guideText font size
@@ -62,8 +64,7 @@ namespace Defend.Tutorial
             if (isA == true)
             {
                 AChangeToPickax();
-                // TODO :: Player 손에 곡괭이가 생긴 경우
-                if (Input.GetKeyDown(KeyCode.A))
+                if (PickAxe.activeSelf == true)
                 {
                     isA = false;
                     isB = true;
@@ -75,8 +76,7 @@ namespace Defend.Tutorial
             {
                 BMiningRock();
                 // 튜토리얼 Rock이 사라진 경우
-                if (Input.GetKeyDown(KeyCode.B))
-                //if (rock == null)
+                if (rock == null)
                 {
                     isB = false;
                     isC = true;
@@ -87,9 +87,8 @@ namespace Defend.Tutorial
             if (isC == true)
             {
                 CLoggingTree();
-                if (Input.GetKeyDown(KeyCode.C))
                 // 튜토리얼 Tree가 사라진 경우
-                //if (tree == null)
+                if (tree == null)
                 {
                     isC = false;
                     isD = true;
@@ -133,7 +132,7 @@ namespace Defend.Tutorial
         // Step.A 곡괭이로 무기 바꾸기
         void AChangeToPickax()
         {
-            // TODO :: 장비 바뀌는 거 확인, 무슨 키 쓰는지 
+            // TODO :: 무슨 키 쓰는지 
             guideText.spriteAsset = pickaxSpriteAsset;
             guideString = $"Press the <color=#FF0000>Y</color>-Action button to change the   <size=12><sprite=0>";
             guideText.text = guideString;
@@ -142,7 +141,6 @@ namespace Defend.Tutorial
         // Step.B 곡괭이로 채광하기
         void BMiningRock()
         {
-            // TODO :: 채광되는지 확인 
             guideString = $"Use    <size=12><sprite=0><size={fontSize}>to mine the rock";
             guideText.text = guideString;
         }
@@ -150,7 +148,6 @@ namespace Defend.Tutorial
         // Step.C 도끼로 벌목하기
         void CLoggingTree()
         {
-            // TODO :: 벌목되는지 확인 
             guideText.spriteAsset = axeSpriteAsset;
             guideString = $"Change equipment into  <size=12><sprite=0><size={fontSize}> and logging";
             guideText.text = guideString;
@@ -160,9 +157,8 @@ namespace Defend.Tutorial
         void DShowUserUI()
         {
             // TODO :: 타워 건설하는법 이식하기, 무슨 키 쓰는지
-            guideText.spriteAsset = axeSpriteAsset;
-            //guideText.spriteAsset = handSpriteAsset;
-            guideString = $"Change to <size=12><sprite=0><size={fontSize}>\nPress the <color=#FF0000>Y</color>-Action button to show the UI\nSelect Build , and build a tower";
+            guideText.spriteAsset = handSpriteAsset;
+            guideString = $"Change to    <size=12><sprite=0><size={fontSize}>\nPress the <color=#FF0000>Y</color>-Action button to show the UI\nSelect Build , and build a tower";
             guideText.text = guideString;
         }
 
@@ -178,12 +174,14 @@ namespace Defend.Tutorial
         // Show UI
         public void ShowUI()
         {
+            Debug.Log("SHOW");
             backgroundUI.SetActive(true);
             showButton.gameObject.SetActive(false);
         }
         // Hide UI
         public void HideUI()
         {
+            Debug.Log("HIDE");
             backgroundUI.SetActive(false);
             showButton.gameObject.SetActive(true);
         }

@@ -35,12 +35,12 @@ namespace Defend.Player
         public GameObject[] potalsEffect;
 
         //영구 구매여부
-        private bool isPotalActive = false;
-        private bool isMoveSpeedUp = false;
+        public bool isPotalActive = false;
+        public bool isMoveSpeedUp = false;
+        public bool isAutoGain = false;
         //private bool isMoneyUp = false;
         //private bool isTreeUp = false;
         //private bool isRockUp = false;
-        private bool isAutoGain = false;
         //버튼 비활성화
         public Button[] btnList;
 
@@ -84,16 +84,20 @@ namespace Defend.Player
         //private float increaseTowerATKRangeUpgrade = 1f;
 
         //업그레이드 단계
-        private int currentHPUpgradeLevel = 0; //hp
-        private int currentHPTimeUpgradeLevel = 0; //체젠
-        private int currentMoneyGainUpgradeLevel = 0;
-        private int currentTreeGainUpgradeLevel = 0;
-        private int currentRockGainUpgradeLevel = 0;
-        private int currenteArmorUpgradeLevel = 0;
-        private int currentTowerATKUpgradeLevel = 0;
-        private int currentTowerATKSpeedUpgradeLevel = 0;
-        private int currentTowerATKRangeUpgradeLevel = 0;
+        public int currentHPUpgradeLevel = 0; //hp
+        public int currentHPTimeUpgradeLevel = 0; //체젠
+        public int currentMoneyGainUpgradeLevel = 0;
+        public int currentTreeGainUpgradeLevel = 0;
+        public int currentRockGainUpgradeLevel = 0;
+        public int currenteArmorUpgradeLevel = 0;
+        public int currentTowerATKUpgradeLevel = 0;
+        public int currentTowerATKSpeedUpgradeLevel = 0;
+        public int currentTowerATKRangeUpgradeLevel = 0;
 
+        //타워업그레이드용
+        public int atkLevel = 0;
+        public int atkSpeedLevel = 0;
+        public int atkRangeLevel = 0;
 
         //테스트용 텍스트
         public TextMeshProUGUI test1;
@@ -114,16 +118,17 @@ namespace Defend.Player
             RgAmount = health.RgAmount;
 
 
-
+       
             initializeUpgradeCosts();
-            UpdateButtonStates();
+    
 
         }
 
         private void Update()
         {
-
+            UpdateButtonStates();
             PriceUpdate();
+            //UpdateButtonStates();
             test1.text = $"curent HP = {health.CurrentHealth}";
             test2.text = $"hpmax ={health.maxHealth}";
             test3.text = $"hp rex={health.RgAmount}";
@@ -162,7 +167,7 @@ namespace Defend.Player
         public void HPUpgrade()
         {
             //Debug.Log("HPUpgrade spend money");
-            if (currentHPUpgradeLevel < CostHPUpgrade.Length && health != null && health.maxHealth < 1000f && playerState.money >= CostHPUpgrade[currentHPTimeUpgradeLevel])
+            if (currentHPUpgradeLevel < CostHPUpgrade.Length && health != null && health.maxHealth < 1000f && playerState.money >= CostHPUpgrade[currentHPUpgradeLevel])
             {
                 // 단계별 체력 증가
                 health.IncreaseMaxHealth(IncreaseHPUpgrade[currentHPUpgradeLevel]);
@@ -302,6 +307,7 @@ namespace Defend.Player
                 {
                     buffContents.atk = 0f;
                     buffContents.atk++;
+                    atkLevel++;
 
                 }
                 foreach (var tower in towerbase)
@@ -327,6 +333,7 @@ namespace Defend.Player
                 {
                     buffContents.shootDelay = 0f;
                     buffContents.shootDelay++;
+                    atkSpeedLevel++;
 
                 }
                 foreach (var tower in towerbase)
@@ -349,6 +356,7 @@ namespace Defend.Player
                 {
                     buffContents.atkRange = 0f;
                     buffContents.atkRange++;
+                    atkRangeLevel++;
 
                 }
                 foreach (var tower in towerbase)
