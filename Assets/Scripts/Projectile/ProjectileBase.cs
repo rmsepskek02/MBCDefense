@@ -1,6 +1,7 @@
+using Defend.Manager;
 using Defend.TestScript;
-using System.Collections.Generic;
 using UnityEngine;
+using static Defend.Utillity.AudioUtility;
 /// <summary>
 /// 발사체의 기능을 정의한 상위 클래스
 /// </summary>
@@ -8,14 +9,26 @@ namespace Defend.Projectile
 {
     public abstract class ProjectileBase : MonoBehaviour
     {
-        [SerializeField] protected Transform target;                    // 목표물
-        [SerializeField] protected Vector3 targetPosition;              // 목표물
-        [SerializeField] protected ProjectileInfo projectileInfo;       // 발사체 정보
-        [SerializeField] protected Vector3 offset;
+        [SerializeField] public Transform target;                // 목표물
+        [SerializeField] public Vector3 targetPosition;          // 목표물
+        [SerializeField] protected ProjectileInfo projectileInfo;   // 발사체 정보
+        [SerializeField] public Vector3 offsetPosition;          // Position 보정
+        [SerializeField] public float offsetScale;               // Scale 보정
 
         protected virtual void Start()
         {
-            
+            GameManager.instance.AddProjectile(this);
+            if(target != null)
+            {
+                offsetPosition = target.gameObject.GetComponent<EnemyController>().positionOffset;
+                offsetScale = target.gameObject.GetComponent<EnemyController>().scaleOffset;
+                targetPosition = target.position + offsetPosition;
+                transform.GetChild(0).localScale *= offsetScale;
+            }
+        }
+        protected virtual void OnDestroy()
+        {
+            GameManager.instance.RemoveProjectile(this);
         }
 
         protected virtual void Update()
@@ -27,18 +40,29 @@ namespace Defend.Projectile
         public virtual void Init(ProjectileInfo _projectileInfo, Transform closestTarget)
         {
             target = closestTarget;
-            offset = target.gameObject.GetComponent<EnemyController>().positionOffset;
-            targetPosition = target.position + offset;
+            offsetPosition = target.gameObject.GetComponent<EnemyController>().positionOffset;
+            offsetScale = target.gameObject.GetComponent<EnemyController>().scaleOffset;
+            targetPosition = target.position + offsetPosition;
+            transform.GetChild(0).localScale *= offsetScale;
             projectileInfo = _projectileInfo;
         }
 
-        // 타겟에 Projectile Effect 생성
+        // 타겟에 Projectile Effect & Sound 생성
         protected virtual void Hit()
         {
             // Projectile Effect 생성
-            GameObject effect = Instantiate(projectileInfo.effectPrefab, transform.position, Quaternion.identity);
-            // Projectile Effect 삭제 예약
-            Destroy(effect, projectileInfo.effectTime);
+            if (projectileInfo.effectPrefab != null)
+            {
+                GameObject effect = Instantiate(projectileInfo.effectPrefab, transform.position, Quaternion.identity);
+                effect.transform.localScale *= offsetScale;
+                // Projectile Effect 삭제 예약
+                Destroy(effect, projectileInfo.effectTime);
+            }
+            // Projectile Sound 생성
+            if(projectileInfo.sfxClip != null)
+            {
+                CreateSFX(projectileInfo.sfxClip, transform.position, AudioGroups.EFFECT);
+            }
             // Projectile 삭제 
             Destroy(this.gameObject);
         }

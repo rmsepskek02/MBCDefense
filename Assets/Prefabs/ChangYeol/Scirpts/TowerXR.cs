@@ -1,5 +1,6 @@
 using Defend.Player;
 using Defend.Tower;
+using Defend.Utillity;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
 using UnityEngine.XR.Interaction.Toolkit.Interactables;
@@ -12,7 +13,7 @@ namespace Defend.UI
         [SerializeField]private TowerInfo towerInfo;
         public TowerInfo upgradetowerInfo;
         public int currentindex = BuildManager.instance.buildMenu.indexs;
-        public Sprite[] currentTower = new Sprite[12];
+        public Sprite[] currentTower = new Sprite[24];
         private GameObject tower_upgrade;
         private TowerBase towerBase;
         public int currentlevel = BuildManager.instance.buildMenu.levelindex;
@@ -34,26 +35,28 @@ namespace Defend.UI
             towerBase = GetComponent<TowerBase>();
             towerInfo = towerBase.GetTowerInfo();
             CastleUpgrade castle = buildManager.buildMenu.GetComponent<CastleUpgrade>();
-            towerInfo.projectile.attack += castle.atkLevel;
-            towerInfo.projectile.moveSpeed += castle.atkSpeedLevel;
-            towerInfo.projectile.attackRange += castle.atkRangeLevel;
-            if (towerBase.GetTowerInfo().upgradeTower)
+            towerInfo.projectile.attack += (1 * castle.atkLevel);
+            for (int i = 0;i < castle.atkSpeedLevel; i++)
             {
-                upgradetowerInfo = towerBase.GetTowerInfo().upgradeTower.GetComponent<TowerBase>().GetTowerInfo();
-                upgradetowerInfo.projectile.attack += castle.atkLevel;
-                upgradetowerInfo.projectile.moveSpeed += castle.atkSpeedLevel;
-                upgradetowerInfo.projectile.attack += castle.atkRangeLevel;
+                towerInfo.shootDelay *= (0.99f);
+            }
+            for (int i = 0; i< castle.atkRangeLevel; i++)
+            {
+                towerInfo.attackRange *= (1.01f);
             }
         }
-        protected override void OnHoverEntered(HoverEnterEventArgs args)
+        protected override void OnHoverEntering(HoverEnterEventArgs args)
         {
-            base.OnHoverEntered(args);
-            buildManager.buildMenu.isReticle = false;
+            base.OnHoverEntering(args);
+            //buildManager.buildMenu.isReticle = false;
+            buildManager.buildMenu.tile.leftReticleVisual.enabled = false;
         }
-        protected override void OnHoverExited(HoverExitEventArgs args)
+        protected override void OnHoverExiting(HoverExitEventArgs args)
         {
-            base.OnHoverExited(args);
-            buildManager.buildMenu.isReticle = true;
+            base.OnHoverExiting(args);
+            //if (!buildManager.buildMenu.istrigger) return;
+            //buildManager.buildMenu.isReticle = true;
+            buildManager.buildMenu.tile.leftReticleVisual.enabled = true;
         }
         protected override void OnSelectEntered(SelectEnterEventArgs args)
         {
@@ -62,15 +65,18 @@ namespace Defend.UI
         }
         public void SellTower()
         {
+            if (this.gameObject != gameObject) return;
             //기본 터렛을 판매
-            if (this.gameObject != null)
+            if (this.gameObject != null && this.gameObject == buildManager.tower.gameObject)
             {
                 Destroy(this.gameObject);
-                //IsUpgrade = false;
-                //GameObject effect = Instantiate(SellImpectPrefab, GetBuildPosition(), Quaternion.identity);
-                //Destroy(effect, 2f);
+                GameObject effect = Instantiate(buildManager.buildMenu.tile.TowerImpectPrefab[3],
+                    transform.position, Quaternion.identity);
+                Destroy(effect, 2f);
                 //기본터렛들의 반값으로 판매
                 buildManager.playerState.AddMoney(towerInfo.GetSellCost());
+                buildManager.playerState.AddRock(towerInfo.GetSellRockCost());
+                buildManager.playerState.AddTree(towerInfo.GetSellTreeCost());
                 buildManager.DeselectTile();
             }
             else if (!this.gameObject)
@@ -78,58 +84,58 @@ namespace Defend.UI
                 Debug.Log("판매하지 못했습니다");
             }
         }
-
         public void UpgradeTower()
         {
-            if (towerInfo == null)
-            {
-                Debug.Log("업그레이드 실패했습니다");
-                return;
-            }
+            if (towerInfo == null || this.gameObject != buildManager.tower.gameObject) return;
             if (towerInfo != null)
             {
-                //Effect
-                //GameObject effectGo = Instantiate(TowerImpectPrefab, GetBuildPosition(), Quaternion.identity);
-                //Destroy(effectGo, 2f);
                 if (towerInfo.upgradeTower &&
-                    buildManager.playerState.SpendMoney(towerInfo.cost2) && buildManager.playerState.SpendResources())
+                    buildManager.playerState.SpendMoney(towerInfo.cost2)
+                    && buildManager.playerState.SpendResources(towerInfo.cost3,towerInfo.cost4))
                 {
-                    if ((currentlevel == 1 && !Isupgradeone) || (currentlevel == 2 && !Isupgradeone))
+                    AudioUtility.CreateSFX(buildManager.towerBuildSound, transform.position, AudioUtility.AudioGroups.EFFECT);
+                    if (currentlevel == 1 && !Isupgradeone)
                     {
+                        //Effect
+                        GameObject effectGo = Instantiate(buildManager.buildMenu.tile.TowerImpectPrefab[1],
+                            transform.position, Quaternion.identity);
+                        Destroy(effectGo, 2f);
                         //터렛 업그레이드 생성
                         tower_upgrade = Instantiate(towerInfo.upgradeTower, transform.position, Quaternion.identity);
                         tower_upgrade.AddComponent<BoxCollider>();
                         tower_upgrade.AddComponent<TowerXR>();
                         TowerXR tower = tower_upgrade.GetComponent<TowerXR>();
-                        tower.currentindex += 1;
-                        tower.currentlevel += 1;
+                        tower.currentindex = currentindex + 1;
+                        tower.currentlevel = currentlevel + 1;
                         tower.Isupgradeone = true;
                         BoxCollider boxCollider = tower_upgrade.GetComponent<BoxCollider>();
-                        boxCollider.size = buildManager.buildMenu.boxes[currentindex].size;
+                        boxCollider.size = buildManager.buildMenu.boxes[currentindex].size + new Vector3(0.5f, 0, 0.5f);
                         boxCollider.center = buildManager.buildMenu.boxes[currentindex].center;
                         Destroy(this.gameObject);
                         tower_upgrade = null;
                         buildManager.DeselectTile();
-                        buildManager.buildMenu.istowerup = false;
                     }
                     else if (currentlevel == 2 && Isupgradeone)
                     {
+                        //Effect
+                        GameObject effectGo = Instantiate(buildManager.buildMenu.tile.TowerImpectPrefab[2],
+                            transform.position, Quaternion.identity);
+                        Destroy(effectGo, 2f);
                         //터렛 업그레이드 생성
                         tower_upgrade = Instantiate(towerInfo.upgradeTower, transform.position, Quaternion.identity);
                         tower_upgrade.AddComponent<BoxCollider>();
                         tower_upgrade.AddComponent<TowerXR>();
                         TowerXR tower = tower_upgrade.GetComponent<TowerXR>();
-                        tower.currentindex += 2;
-                        tower.currentlevel += 2;
+                        tower.currentindex = currentindex + 1;
+                        tower.currentlevel = currentlevel + 1;
                         tower.Isupgradeone = true;
                         tower.Isupgradetwo = true;
                         BoxCollider boxCollider = tower_upgrade.GetComponent<BoxCollider>();
-                        boxCollider.size = buildManager.buildMenu.boxes[currentindex].size;
+                        boxCollider.size = buildManager.buildMenu.boxes[currentindex].size + new Vector3(0.5f, 0, 0.5f);
                         boxCollider.center = buildManager.buildMenu.boxes[currentindex].center;
                         Destroy(this.gameObject);
                         tower_upgrade = null;
                         buildManager.DeselectTile();
-                        buildManager.buildMenu.istowerup = false;
                     }
                 }
             }

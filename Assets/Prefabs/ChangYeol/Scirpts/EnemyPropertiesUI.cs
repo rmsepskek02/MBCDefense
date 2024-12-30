@@ -1,7 +1,7 @@
 using Defend.Enemy;
-using Unity.VisualScripting;
+using Defend.TestScript;
+using System.Collections;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 namespace Defend.UI
 {
@@ -10,45 +10,38 @@ namespace Defend.UI
         #region Variables
         public GameObject EnemyProUI;
         //Enemy 속성값
-        public Upgrade[] EnemyText;
-        private BuildManager buildManager;
+        public GameObject Enemyinfo;
 
-        public GameObject[] targetObject; // 크기에 따라 조절할 오브젝트
-        public RectTransform canvasRect;
-        RectTransform[] targetRect;
+        public float waitSecond = 5;
+        public ListSpawnManager spawnManager;
+
+        ListWaveData ListWaveData;
         #endregion
-        private void Start()
-        {
-            buildManager = BuildManager.Instance;
-            ShowProUI();
-        }
-        private void Update()
-        {
-            /*for (int i = 0; i < targetObject.Length; i++)
-            {
-                if (targetObject != null && targetObject[i].activeSelf)
-                {
-                    targetRect = targetObject[i].GetComponents<RectTransform>();
-                    canvasRect.sizeDelta = new Vector2(canvasRect.sizeDelta.x, canvasRect.sizeDelta.y + targetRect[0].sizeDelta.y);
-                }
-            }*/
-        }
         public void ShowProUI()
         {
-            EnemyProUI.SetActive(true);
-            for ( int i = 0; i < EnemyText.Length; i++ )
+            StartCoroutine(HideProUI());
+            ListWaveData = spawnManager.waves[spawnManager.waveCount];
+            foreach (var enemy in ListWaveData.enemies)
             {
-                EnemyText[i].name.text = buildManager.enemyInfo[i].Enemyname;
-                EnemyText[i].image.sprite = buildManager.enemyInfo[i].enemySprite;
-                EnemyText[i].Hp.text = "HP : " + buildManager.enemyInfo[i].Health.maxHealth.ToString();
-                EnemyText[i].Mp.text = "Armor : " + buildManager.enemyInfo[i].Health.baseArmor.ToString();
-                EnemyText[i].Attack.text = "Attack : " + buildManager.enemyInfo[i].Attack.baseAttackDamage.ToString();
-                EnemyText[i].AttackSpeed.text = "AttackSpeed : " + buildManager.enemyInfo[i].Attack.baseAttackDelay.ToString();
-                EnemyText[i].Buycost.text = "Get Money : " + buildManager.enemyInfo[i].Money.rewardGoldCount.ToString();
+                float maxhealth = enemy.enemyPrefab.GetComponent<Health>().maxHealth;
+                maxhealth *= (spawnManager.waveCount + 1);
+                GameObject info = Instantiate(Enemyinfo,EnemyProUI.transform);
+                Upgrade enemyinfo = info.GetComponent<EnemyInfo>().EnemyText;
+                enemyinfo.name.text = enemy.enemyPrefab.name;
+                enemyinfo.image.sprite = enemy.enemyPrefab.GetComponent<EnemyController>().sprite;
+                enemyinfo.Hp.text = "HP : " + maxhealth.ToString();
+                enemyinfo.Mp.text = "Armor : " + enemy.enemyPrefab.GetComponent<Health>().baseArmor.ToString();
+                enemyinfo.Attack.text = "Attack : " + enemy.enemyPrefab.GetComponent<EnemyAttackController>().baseAttackDamage.ToString();
+                enemyinfo.AttackSpeed.text = "AttackSpeed : " + enemy.enemyPrefab.GetComponent<EnemyAttackController>().baseAttackDelay.ToString();
+                enemyinfo.Buycost.text = " : " + enemy.enemyPrefab.GetComponent<EnemyController>().rewardGoldCount.ToString();
+                enemyinfo.UpgradeMoney.text = "X" + enemy.count.ToString();
+                Destroy(info,waitSecond);
             }
         }
-        public void HideProUI()
+        IEnumerator HideProUI()
         {
+            EnemyProUI.SetActive(true);
+            yield return new WaitForSeconds(waitSecond);
             EnemyProUI.SetActive(false);
         }
     }

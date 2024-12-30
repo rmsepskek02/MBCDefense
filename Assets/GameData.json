@@ -1,20 +1,29 @@
 {
-    "isClear": [
-        false,
-        false,
-        false,
-        false,
-        false
-    ],
-    "isTowerUnlock": [
-        false,
-        false,
-        false,
-        false,
-        false,
-        false,
-        false
-    ],
+    "Round": 1,
+    "countdown": 10.0,
+    "isTowerUnlock1": false,
+    "isTowerUnlock2": false,
+    "isTowerUnlock3": false,
+    "isTowerUnlock4": false,
+    "isTowerUnlock5": false,
+    "isTowerUnlock6": false,
+    "isTowerUnlock7": false,
+    "isTowerUnlock8": false,
+    "isTowerUnlock9": false,
+    "isTowerUnlock10": false,
+    "isTowerUnlock11": false,
+    "isTowerUnlock12": false,
+    "isTowerUnlocked1": true,
+    "isTowerUnlocked2": true,
+    "isTowerUnlocked3": true,
+    "isTowerUnlocked4": true,
+    "isTowerUnlocked5": true,
+    "isTowerUnlocked6": true,
+    "isTowerUnlocked7": true,
+    "isTowerUnlocked8": false,
+    "isTowerUnlocked9": false,
+    "isTowerUnlocked10": false,
+    "isTowerUnlocked11": false,
     "isHPUpgradelevel": 0,
     "isHPTimeUpgradelevel": 0,
     "isArmorUpgradelevel": 0,
@@ -27,8 +36,23 @@
     "isPotalActive": false,
     "isMoveSpeedUp": false,
     "isAutoGain": false,
-    "money": 0.0,
-    "health": 0.0,
+    "money": 2800.0,
+    "health": 100.0,
     "tree": 0.0,
-    "rock": 0.0
+    "rock": 0.0,
+    "soundData": {
+        "masterVolumn": 1.0,
+        "bgmVolumn": 1.0,
+        "sfxVolumn": 1.0
+    },
+    "isTuneeling": false,
+    "isPlayerUI": false,
+    "towers": [
+        {
+            "instanceID": -404198
+        },
+        {
+            "instanceID": -404558
+        }
+    ]
 }

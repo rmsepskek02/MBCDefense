@@ -10,6 +10,7 @@ namespace Defend.Projectile
     {
         protected override void Start()
         {
+            base.Start();
         }
 
         protected override void Update()
@@ -28,7 +29,7 @@ namespace Defend.Projectile
         protected virtual void MoveToTarget()
         {
             // 타겟의 현재 위치와 오프셋을 반영해 targetPosition 갱신
-            targetPosition = target.position + offset;
+            targetPosition = target.position + offsetPosition;
             // 타겟을 바라보도록 
             transform.LookAt(targetPosition);
             // 타겟을 향해 이동

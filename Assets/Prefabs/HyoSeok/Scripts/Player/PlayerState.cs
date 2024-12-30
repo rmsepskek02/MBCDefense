@@ -1,4 +1,6 @@
 
+using Defend.Manager;
+using Defend.UI;
 using UnityEngine;
 
 namespace Defend.Player
@@ -6,12 +8,23 @@ namespace Defend.Player
     public class PlayerState : MonoBehaviour
     {
         #region Variables
+        //빌드매니저 객체
+        private BuildManager buildManager;
         public float money = 100; //돈
-        public float health = 20; //체력(성)
+        //public float health = 20; //체력(성)
         public float tree; //자원(나무)
         public float rock; //자원(돌)
 
         #endregion
+
+        void Start()
+        {
+            //초기화
+            buildManager = BuildManager.Instance;
+            money = GameManager.Instance.data.money;
+            tree = GameManager.Instance.data.tree;
+            rock = GameManager.Instance.data.rock;
+        }
        public string FormatMoney(float amount = 0)
         {
             amount = money;
@@ -29,17 +42,17 @@ namespace Defend.Player
             Debug.Log($"Money = {money} Tree = {tree} Rock = {rock}");
         }
 
-        //데미지 입기
-        public void TakeDamage(float amount)
-        {
-            if (health <= amount)
-            {
-                health = 0;
+        ////데미지 입기
+        //public void TakeDamage(float amount)
+        //{
+        //    if (health <= amount)
+        //    {
+        //        health = 0;
 
-                //GameOver
-                GameOver();
-            }
-        }
+        //        //GameOver
+        //        GameOver();
+        //    }
+        //}
 
         //GameOver
         public void GameOver()
@@ -66,6 +79,7 @@ namespace Defend.Player
             else
             {
                 //구매 불가 ui띄우기
+                buildManager.warningWindow.ShowWarning("Not Enough Money");
                 Debug.Log("Not Enough Money");
                 return false;       //돈 부족하면 구매불가
             }
@@ -96,7 +110,7 @@ namespace Defend.Player
             else
             {
                 //구매 불가 ui띄우기
-                Debug.Log("Not Enough Money");
+                buildManager.warningWindow.ShowWarning("Not Enough Money");
                 return false;
             }
         }

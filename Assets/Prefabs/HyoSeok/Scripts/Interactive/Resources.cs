@@ -6,14 +6,14 @@ using UnityEngine;
 namespace Defend.Interactive
 {
 
-    public class Resources : MonoBehaviour
+    public class GameResources : MonoBehaviour
     {
         public enum ResourceTypeEnum
         {
             Rock,
             Tree,
             Money
-                
+
         }
 
         [System.Serializable]
@@ -23,17 +23,17 @@ namespace Defend.Interactive
             public float amount;       // 자원 양
             public float health;       // 자원 별 체력
             public GameObject resourceItem;  // 자원 드랍아이템
-           
+
         }
         #region
-      
+
 
         private bool isDamaged = false;  // 데미지를 받는 중인지 여부
         public ResourceType[] resourceTypes;  // 자원 타입 배열
         private ResourceType currentResourceType;    // 현재 자원 타입
-
+        ResorceSpawn resorceSpawn;
         //타격 사운드
-        public AudioClip  hitSound;
+        public AudioClip hitSound;
         private AudioSource audioSource;
 
         //제거 이펙트
@@ -53,7 +53,7 @@ namespace Defend.Interactive
         private void Start()
         {
             audioSource = gameObject.AddComponent<AudioSource>();
-           
+
         }
 
         private void OnTriggerEnter(Collider other)
@@ -61,14 +61,13 @@ namespace Defend.Interactive
             // 충돌한 오브젝트의 이름과 현재 오브젝트의 이름을 기반으로 자원 타입 설정
             string otherName = other.gameObject.name;
             string currentName = gameObject.name;
-
             if (!isDamaged &&
                 ((otherName == "Axe" && currentName == "Tree(Clone)") ||
                  (otherName == "PickAxe" && currentName == "Rock(Clone)")))
             {
                 SetCurrentResourceType(currentName);
                 StartCoroutine(Shake());
-                StartCoroutine(TakeDamage(10)); 
+                StartCoroutine(TakeDamage(10));
             }
         }
 
@@ -82,8 +81,8 @@ namespace Defend.Interactive
             // 자원 생성 (미니사이즈)
             if (currentResourceType.resourceItem != null)
             {
-                //위치 다시잡아야됌 ======================================================================================================
-                GameObject dropitem = Instantiate(currentResourceType.resourceItem, transform.position, Quaternion.identity);
+                Vector3 spawnPosition = new Vector3(transform.position.x, transform.position.y + 1, transform.position.z); 
+                GameObject dropitem = Instantiate(currentResourceType.resourceItem, spawnPosition, Quaternion.identity);
                 DropItem item = dropitem.GetComponent<DropItem>();
                 item.amount = currentResourceType.amount;
                 item.resourceName = currentResourceType.name.ToString();
@@ -93,13 +92,14 @@ namespace Defend.Interactive
             PlayHitSound();
             if (currentResourceType.health <= 0)
             {
-
+                
                 // 흔들림 효과와 사운드가 재생될 시간을 주기 위해 대기
                 yield return new WaitForSeconds(0.5f);
                 Destroy(gameObject);
                 //제거 이펙트
-               GameObject detheffect= Instantiate(destroyEffect, transform.position, Quaternion.identity);
-                Destroy(detheffect,1f);
+                GameObject detheffect = Instantiate(destroyEffect, transform.position, Quaternion.identity);
+                Destroy(detheffect, 1f);
+                //resorceSpawn.treeSpawned = true;
             }
 
             yield return new WaitForSeconds(1f);
@@ -113,7 +113,7 @@ namespace Defend.Interactive
             float t = 1f;
             float shakePower = 1f;
             Vector3 origin = transform.position;
-           
+
             while (t > 0f)
             {
                 t -= 0.05f;
@@ -123,14 +123,7 @@ namespace Defend.Interactive
 
             transform.position = origin;
         }
-       // //자원흭득
-       //public void GiveResource()
-       // {
-       //     // 플레이어에게 전달
-       //     ResourceManager.Instance.AddResources(currentResourceType.amount, currentResourceType.name.ToString());
-       // }
-
-        // 자원 타입에 따른 현재 자원 설정
+    
         public void SetCurrentResourceType(string resourceName)
         {
             foreach (var resourceType in resourceTypes)

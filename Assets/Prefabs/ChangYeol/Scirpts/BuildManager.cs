@@ -1,5 +1,7 @@
+using Defend.Enemy;
 using Defend.Player;
 using Defend.Tower;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -28,7 +30,7 @@ namespace Defend.UI
 
         #region Variables
         //타일에 설치할 타일의 정보(프리팹, 가격정보)
-        private TowerInfo towerInfo;
+        [HideInInspector] public TowerInfo towerInfo;
         //플레이어
         public PlayerState playerState;
         //경고창
@@ -41,11 +43,17 @@ namespace Defend.UI
         public UpgradeAndSell menu;
         public BuildMenu buildMenu;
         //선택한 타워
-        private TowerXR tower;
+        [HideInInspector] public TowerXR tower;
         //타워 안에 있는 속성값
         public TowerBase[] towerBases;
-        public EnemyInfo[] enemyInfo;
+        [HideInInspector] public EnemyPropertiesUI enemy;
+
+        public AudioClip towerBuildSound;
         #endregion
+        private void Start()
+        {
+            enemy = menu.GetComponent<EnemyPropertiesUI>();
+        }
         public void SelectTower(TowerXR towerXR)
         {
             //같은 타워를 선택하면 HideUI

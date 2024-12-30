@@ -3,7 +3,10 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 3
-  tags: []
+  tags:
+  - RightHand
+  - LeftHand
+  - PlayerHand
   layers:
   - Default
   - TransparentFX
@@ -13,10 +16,10 @@ TagManager:
   - UI
   - Enemy
   - Boss
-  - 
-  - 
-  - 
-  - 
+  - Player
+  - Map
+  - Object
+  - Tower
   - 
   - 
   - 
@@ -40,6 +43,12 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Effect
+    uniqueID: 4044206877
+    locked: 0
+  - name: UI
+    uniqueID: 1304189969
     locked: 0
   m_RenderingLayers:
   - Default

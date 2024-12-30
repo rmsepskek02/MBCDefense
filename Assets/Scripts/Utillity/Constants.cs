@@ -11,15 +11,25 @@ namespace Defend.Utillity
         #endregion
 
         #region Animation 
-        public static string ANIM_SHOOTTRIGGER = "ShootTrigger";         //Anim - ShootTrigger
+        public static string TOWER_ANIM_SHOOTTRIGGER = "ShootTrigger";   //TOWERAnim - ShootTrigger
         #endregion
 
         #region EnemyAnimation
-        public static string ENEMY_ANIM_ISARRIVE = "IsArrive";         //EnemyAnim - ArriveCheck
-        public static string ENEMY_ANIM_ISDEATH = "IsDeath";         //EnemyAnim - DeathCheck
-        public static string ENEMY_ANIM_ATTACKTRIGGER = "Attack";         //EnemyAnim - AttackTrigger
-        public static string ENEMY_ANIM_SKILLTRIGGER = "Skill";         //EnemyAnim - ScreamTrigger
+        public static string ENEMY_ANIM_ISARRIVE = "IsArrive";          //EnemyAnim - ArriveCheck
+        public static string ENEMY_ANIM_ISDEATH = "IsDeath";            //EnemyAnim - DeathCheck
+        public static string ENEMY_ANIM_ATTACKTRIGGER = "Attack";       //EnemyAnim - AttackTrigger
+        public static string ENEMY_ANIM_SKILLTRIGGER = "Skill";         //EnemyAnim - SkillTrigger
+        /**********************************************   EnemyAnimationState    ************************************************/
+        public static string ENEMY_ANIM_STATE_DEATH = "Death";          //EnemyAnimState - Death
+        public static string ENEMY_ANIM_STATE_IDLE = "Idle";            //EnemyAnimState - Idle
+        public static string ENEMY_ANIM_STATE_ATTACK = "Attack";        //EnemyAnimState - Attack
+        public static string ENEMY_ANIM_STATE_SKILL = "Skill";          //EnemyAnimState - Skill
+        #endregion
 
+        #region SoundParameter
+        public static string AUDIO_UTIL_MASTER = "MASTER";
+        public static string AUDIO_UTIL_BGM = "BGM";
+        public static string AUDIO_UTIL_EFFECT = "EFFECT";
         #endregion
     }
 }

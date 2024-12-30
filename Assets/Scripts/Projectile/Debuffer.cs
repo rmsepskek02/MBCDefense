@@ -1,5 +1,7 @@
+using Defend.TestScript;
 using System;
 using UnityEngine;
+using static Defend.Utillity.AudioUtility;
 /// <summary>
 /// Debuff를 거는 발사체 기능 구현
 /// </summary>
@@ -17,6 +19,7 @@ namespace Defend.Projectile
 
         protected override void Start()
         {
+            base.Start();
             // 대상의 컴포넌트를 가져옴
             targetComponent = target.GetComponent<T>();
             if (targetComponent == null)
@@ -27,13 +30,33 @@ namespace Defend.Projectile
 
         protected override void Update()
         {
+            // 발사한 타워가 판매 또는 업그레이드되면 발사체 파괴
+            if (projectileInfo.tower == null)
+            {
+                Destroy(this.gameObject);
+            }
+
             base.Update();
             CheckDistanceFromTower();
+            CheckHealth();
+        }
+
+        // 파괴될 때 시행
+        protected override void OnDestroy()
+        {
+            base.OnDestroy();
+            // 디버프 해제
+            RemoveDebuff(UndoDebuffAction);
         }
 
         protected override void Hit()
         {
 
+        }
+        private void CheckHealth()
+        {
+            if (target.GetComponent<Health>().CurrentHealth <= 0)
+                Destroy(this.gameObject);
         }
 
         // 디버프 적용
@@ -41,6 +64,12 @@ namespace Defend.Projectile
         {
             applyAction(targetComponent); // 디버프 동작 수행
             isDebuff = true;
+
+            // Projectile Sound 생성
+            if (projectileInfo.sfxClip != null)
+            {
+                CreateSFX(projectileInfo.sfxClip, transform.position, AudioGroups.EFFECT);
+            }
         }
 
         // 디버프 제거
@@ -54,6 +83,7 @@ namespace Defend.Projectile
         protected virtual void CheckDistanceFromTower()
         {
             if (targetComponent == null) return;
+            if (projectileInfo.tower == null) return;
 
             float distance = Vector3.Distance(transform.position, projectileInfo.tower.transform.position);
             bool inAttackRange = distance <= projectileInfo.attackRange;

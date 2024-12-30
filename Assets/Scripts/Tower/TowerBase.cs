@@ -6,6 +6,8 @@ using UnityEngine;
 using Defend.TestScript;
 using System.Linq;
 using System.Collections;
+using static Defend.Utillity.AudioUtility;
+using Defend.Manager;
 /*
 기본타워 => 타겟공격
 스플래시타워 => 지점공격
@@ -43,6 +45,10 @@ namespace Defend.Tower
         [SerializeField] protected ParticleSystem buffEffect;
         [SerializeField] protected ParticleSystem debuffEffect;
         [SerializeField] protected GameObject destroyEffect;
+
+        // Sfx
+        public AudioClip buffSfxClip;                       // 버프 효과음
+
         #endregion
 
         #region Variables For Test
@@ -58,6 +64,8 @@ namespace Defend.Tower
 
         protected virtual void Start()
         {
+            GameManager.instance.AddTower(this);
+
             // 참조
             animator = GetComponent<Animator>();
 
@@ -72,29 +80,32 @@ namespace Defend.Tower
 
             #region Test를 위한 시각화 => LineRenderer 초기화, Gizmo
             {
-                // 기즈모 색상 초기화
-                gizmo.gizmoColor = Color.green;
-                // 기즈모 범위 초기화
-                gizmo.sphereRadius = towerInfo.attackRange;
-                // 라인랜더러 길이 초기화
-                gizmo.lineLength = towerInfo.attackRange;
+                //// 기즈모 색상 초기화
+                //gizmo.gizmoColor = Color.green;
+                //// 기즈모 범위 초기화
+                //gizmo.sphereRadius = towerInfo.attackRange;
+                //// 라인랜더러 길이 초기화
+                //gizmo.lineLength = towerInfo.attackRange;
 
-                // LineRenderer 컴포넌트를 가져오거나 추가
-                lineRenderer = GetComponent<LineRenderer>();
-                if (lineRenderer == null)
-                    lineRenderer = gameObject.AddComponent<LineRenderer>();
+                //// LineRenderer 컴포넌트를 가져오거나 추가
+                //lineRenderer = GetComponent<LineRenderer>();
+                //if (lineRenderer == null)
+                //    lineRenderer = gameObject.AddComponent<LineRenderer>();
 
-                // LineRenderer 초기 설정
-                lineRenderer.startWidth = 0.1f;
-                lineRenderer.endWidth = 0.1f;
-                lineRenderer.positionCount = 2; // 시작점과 끝점
-                lineRenderer.material = new Material(Shader.Find("Sprites/Default")); // 기본 셰이더
-                lineRenderer.startColor = Color.red;
-                lineRenderer.endColor = Color.red;
+                //// LineRenderer 초기 설정
+                //lineRenderer.startWidth = 0.1f;
+                //lineRenderer.endWidth = 0.1f;
+                //lineRenderer.positionCount = 2; // 시작점과 끝점
+                //lineRenderer.material = new Material(Shader.Find("Sprites/Default")); // 기본 셰이더
+                //lineRenderer.startColor = Color.red;
+                //lineRenderer.endColor = Color.red;
             }
             #endregion
         }
-
+        protected virtual void OnDestroy()
+        {
+            GameManager.instance.RemoveTower(this);
+        }
         protected virtual void Update()
         {
             SetRotationToTarget(); // 매 프레임마다 타겟을 바라보도록 회전
@@ -220,7 +231,7 @@ namespace Defend.Tower
                 GameObject projectilePrefab = Instantiate(towerInfo.projectile.prefab, firePoint.transform.position, Quaternion.identity);
                 // Shoot Animation 재생
                 if (animator != null)
-                    animator.SetTrigger(Constants.ANIM_SHOOTTRIGGER);
+                    animator.SetTrigger(Constants.TOWER_ANIM_SHOOTTRIGGER);
 
                 // 발사체 정보 초기화, 발사체의 가장 가까운 타겟설정, 공격 범위 내 타겟들 설정
                 projectilePrefab.GetComponent<ProjectileBase>().Init(towerInfo.projectile, currentTarget);
@@ -237,7 +248,7 @@ namespace Defend.Tower
             // 버프 적용
             towerInfo.projectile.attack += buffContents.atk;
             towerInfo.armor += buffContents.armor;
-            towerInfo.shootDelay /= buffContents.shootDelay;
+            towerInfo.shootDelay *= buffContents.shootDelay;
             towerInfo.attackRange *= buffContents.atkRange;
             status.HealthRegenRatio *= buffContents.healthRegen;
             status.ManaRegenRatio *= buffContents.manaRegen;
@@ -247,8 +258,17 @@ namespace Defend.Tower
             {
                 StartCoroutine(ResetTower(buffContents));
                 // 효과 이펙트 적용
-                ParticleSystem effect = Instantiate(buffEffect, gameObject.transform);
-                Destroy(effect.gameObject, buffContents.duration);
+                if (buffEffect != null)
+                {
+                    ParticleSystem effect = Instantiate(buffEffect, gameObject.transform);
+                    effect.Play();
+                    Destroy(effect.gameObject, buffContents.duration);
+                }
+                // Sfx 생성
+                if (buffSfxClip!= null)
+                {
+                    CreateSFX(buffSfxClip, transform.position, AudioGroups.BuffAndDebuff);
+                }
             }
         }
 

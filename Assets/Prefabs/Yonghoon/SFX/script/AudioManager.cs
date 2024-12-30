@@ -1,8 +1,10 @@
 using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.UI;
+using Defend.Utillity;
+using Defend.Enemy;
 
-namespace Defend.Utillity
+namespace Defend.Audio
 {
     // AudioManager 클래스는 Unity의 오디오 믹서를 제어하는 기능을 제공
     public class AudioManager : MonoBehaviour
@@ -10,16 +12,52 @@ namespace Defend.Utillity
         // AudioMixer 배열은 프로젝트에서 사용할 오디오 믹서들을 참조
         // AudioMixer는 Unity의 오디오 시스템에서 여러 오디오 트랙을 믹싱하고 처리하는 데 사
         public AudioMixer[] AudioMixers;
-        [SerializeField] private Slider m_AudioMasterSlider;
-        [SerializeField] private Slider m_AudioBGMSlider;
-        [SerializeField] private Slider m_AudioSFXSlider;
+        [SerializeField] public Slider m_AudioMasterSlider;
+        [SerializeField] public Slider m_AudioBGMSlider;
+        [SerializeField] public Slider m_AudioSFXSlider;
+
+        public AudioClip peacefulBGM;
+        public AudioClip direBGM;
+        private AudioClip currentBGM; // 현재 재생 중인 BGM
+
+        private AudioSource audioSource;
 
         private void Awake()
         {
-            m_AudioMasterSlider.onValueChanged.AddListener(AudioUtility.SetMasterVolume);
-            m_AudioBGMSlider.onValueChanged.AddListener(AudioUtility.SetBGMVolume);
-            m_AudioSFXSlider.onValueChanged.AddListener(AudioUtility.SetSFXVolume);
+            m_AudioMasterSlider.onValueChanged.AddListener(value => AudioUtility.SetVolume(value, Constants.AUDIO_UTIL_MASTER));
+            m_AudioBGMSlider.onValueChanged.AddListener(value => AudioUtility.SetVolume(value, Constants.AUDIO_UTIL_BGM));
+            m_AudioSFXSlider.onValueChanged.AddListener(value => AudioUtility.SetVolume(value, Constants.AUDIO_UTIL_EFFECT));
+
+            audioSource = GetComponent<AudioSource>();
+            currentBGM = audioSource.clip;
         }
+
+        private void Start()
+        {
+            //InitializeSliders();
+        }
+
+        private void Update()
+        {
+            // 현재 BGM 상태를 결정
+            AudioClip targetBGM = ListSpawnManager.enemyAlive > 0 || ListSpawnManager.isSpawn ? direBGM : peacefulBGM;
+
+            // BGM이 변경되었을 때만 교체
+            if (currentBGM != targetBGM)
+            {
+                ChangeBGM(targetBGM);
+            }
+        }
+
+        private void ChangeBGM(AudioClip clip)
+        {
+            currentBGM = clip; // 현재 BGM 업데이트
+            audioSource.clip = clip;
+            audioSource.playOnAwake = true;
+            audioSource.loop = true;
+            audioSource.Play();
+        }
+
 
         /// <summary>
         /// 지정된 경로(subPath)에 해당하는 AudioMixerGroup들을 찾습니다.
@@ -52,8 +90,10 @@ namespace Defend.Utillity
                 if (AudioMixers[i] != null)
                 {
                     AudioMixers[i].SetFloat(name, value);
+                    InitializeSliders();
                 }
             }
+            
         }
 
         /// <summary>
@@ -73,6 +113,12 @@ namespace Defend.Utillity
                 }
             }
         }
-
+        private void InitializeSliders()
+        {
+            // AudioManager에서 현재 값을 가져와 슬라이더에 반영
+            m_AudioMasterSlider.value = AudioUtility.GetVolume(Constants.AUDIO_UTIL_MASTER);
+            m_AudioBGMSlider.value = AudioUtility.GetVolume(Constants.AUDIO_UTIL_BGM);
+            m_AudioSFXSlider.value = AudioUtility.GetVolume(Constants.AUDIO_UTIL_EFFECT);
+        }
     }
 }
